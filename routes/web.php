@@ -161,6 +161,9 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth', 'permission']], funct
         Route::post('/show', [BrandController::class, 'show'])->name('user.brand.show');
         Route::patch('/update', [BrandController::class, 'update'])->name('user.brand.update');
         Route::post('/destroy', [BrandController::class, 'destroy'])->name('user.brand.destroy');
+        //bulk delete
+        Route::post('/bulk/destroy', [BrandController::class, 'bulkDestroy'])->name('user.brand.destroy.bulk');
+        //bulk delete
     });
 
     // training videos management
@@ -181,6 +184,27 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth', 'permission']], funct
         Route::post('/destroy', [TicketIssueController::class, 'destroy'])->name('user.ticket.destroy');
     });
 
+    // product data management
+    Route::group(['prefix' => 'product/data'], function () {
+        Route::get('/', [ProductDatasController::class, 'index'])->name('user.product.data.list');
+        Route::get('/create', [ProductDatasController::class, 'create'])->name('user.product.data.create');
+        Route::post('/store', [ProductDatasController::class, 'store'])->name('user.product.data.store');
+        // bulk store
+        Route::get('/bulk/create', [ProductDatasController::class, 'bulkCreate'])->name('user.product.data.create.bulk');
+        Route::post('/bulk/store', [ProductDatasController::class, 'bulkStore'])->name('user.product.data.bulk.store');
+        // bulk store
+        // csv upload
+        Route::post('/csv/store', [ProductDatasController::class, 'csvStore'])->name('user.product.data.csv.store');
+        // csv upload
+        Route::post('/show', [ProductDatasController::class, 'show'])->name('user.product.data.show');
+        Route::get('/edit/{id}', [ProductDatasController::class, 'edit'])->name('user.product.data.edit');
+        Route::post('/update/{id}', [ProductDatasController::class, 'update'])->name('user.product.data.update');
+        Route::post('/destroy', [ProductDatasController::class, 'destroy'])->name('user.product.data.destroy');
+        //bulk delete
+        Route::post('/bulk/destroy', [ProductDatasController::class, 'bulkDestroy'])->name('user.product.data.destroy.bulk');
+        //bulk delete
+    });
+
     // product issues management
     Route::group(['prefix' => 'product/issue'], function () {
         Route::get('/', [ProductIssueController::class, 'index'])->name('user.product.issue.list');
@@ -188,6 +212,12 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth', 'permission']], funct
         Route::post('/show', [ProductIssueController::class, 'show'])->name('user.product.issue.show');
         Route::patch('/update', [ProductIssueController::class, 'update'])->name('user.product.issue.update');
         Route::post('/destroy', [ProductIssueController::class, 'destroy'])->name('user.product.issue.destroy');
+        //bulk delete
+        Route::post('/bulk/destroy', [ProductIssueController::class, 'bulkDestroy'])->name('user.product.issue.destroy.bulk');
+        //bulk delete
+        // csv upload
+        Route::post('/csv/store', [ProductIssueController::class, 'csvStore'])->name('user.product.issue.csv.store');
+        // csv upload
     });
 
     // product icon management
@@ -197,5 +227,8 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth', 'permission']], funct
         Route::post('/show', [ProductIconController::class, 'show'])->name('user.product.icon.show');
         Route::post('/update', [ProductIconController::class, 'update'])->name('user.product.icon.update');
         Route::post('/destroy', [ProductIconController::class, 'destroy'])->name('user.product.icon.destroy');
+        //bulk delete
+        Route::post('/bulk/destroy', [ProductIconController::class, 'bulkDestroy'])->name('user.product.icon.destroy.bulk');
+        //bulk delete
     });
 });

@@ -459,7 +459,7 @@ mark {
 
 .side-gradient {
     background: rgb(52, 106, 160) !important;
-    background: linear-gradient(180deg, rgb(93 205 212) 0%, #3f51b5 100%) !important;
+    background: linear-gradient(180deg, rgb(93 205 212) 0%, #669fa3 100%) !important;
     position: fixed !important;
     overflow-y: scroll;
     /* min-height: 100vh !important;

@@ -145,6 +145,13 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('user.product.data.list') }}"
+                                    class="nav-link {{ request()->is('user/product/data*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-edit"></i>
+                                    <p>Product data</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('user.product.issue.list') }}"
                                     class="nav-link {{ request()->is('user/product/issue*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-edit"></i>
@@ -507,6 +514,32 @@
                 event.preventDefault();
             if($(this).val().indexOf('.') !== -1 && event.keyCode == 190)
                 event.preventDefault();
+        });
+
+        // multiple checkbox click to activate remove button
+        function clickToRemove() {
+            if ($('.tap-to-delete').is(':checked')) {
+                $('#delete-box button').removeClass('disabled');
+            } else {
+                $('#delete-box button').addClass('disabled');
+            }
+        }
+
+        // click to select all checkbox
+        function headerCheckFunc() {
+            if ($('#checkbox-head').is(':checked')) {
+                $('.tap-to-delete').prop('checked', true);
+                clickToRemove();
+            } else {
+                $('.tap-to-delete').prop('checked', false);
+                clickToRemove();
+            }
+        }
+
+        // csv upload form button loading
+        $('#fileCsvUploadForm').on('submit', function() {
+            $('#fileCsvUploadForm button[type="submit"]').attr('disabled', true).html('Please wait...');
+            $('.close').attr('disabled', true);
         });
     </script>
 

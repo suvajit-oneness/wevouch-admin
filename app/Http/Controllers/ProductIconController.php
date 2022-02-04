@@ -19,7 +19,7 @@ class ProductIconController extends Controller
                         ->get();
                 }
             }]
-        ])->paginate(50);
+        ])->latest('id')->paginate(50);
 
         return view('admin.product-icon.index', compact('data'));
     }
@@ -95,9 +95,19 @@ class ProductIconController extends Controller
     public function destroy(Request $request)
     {
         $productIcon = ProductIcon::where('id', $request->id)->first();
-        // dd($productIcon->icon);
         \File::delete($productIcon->icon);
         $productIcon->delete();
         return response()->json(['error' => false, 'title' => 'Deleted', 'message' => 'Record deleted', 'type' => 'success']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $delete_ids = $request->delete_check;
+        foreach ($delete_ids as $index => $delete_id) {
+            $productIcon = ProductIcon::where('id', $delete_id)->first();
+            \File::delete($productIcon->icon);
+            $productIcon->delete();
+        }
+        return redirect()->back()->with('success', 'Multiple Product icons deleted successfully');
     }
 }

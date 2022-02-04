@@ -24,9 +24,19 @@
                                     <i class="fas fa-expand"></i>
                                 </button>
                                 <a href="javascript: void(0)" class="btn btn-sm btn-primary" onclick="openSidebarModal()"><i class="fas fa-plus"></i> Create</a>
+                                <a href="#csvUploadModal" data-toggle="modal" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> CSV Upload</a>
                             </div>
                         </div>
                         <div class="card-body">
+                            @if(Session::has('message'))
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <strong>{{ Session::get('message') }}</strong> 
+                                </div>
+                            @endif
+
                             <div class="row mb-3">
                                 <div class="col-sm-7">
                                     <p class="small text-muted">Displaying {{$data->firstItem()}} to {{$data->lastItem()}} out of {{$data->total()}} entries</p>
@@ -52,44 +62,56 @@
                                 </div>
                             </div>
 
-                            <table class="table table-sm table-bordered table-hover" id="showProductIssueTable">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Category</th>
-                                        <th>Function</th>
-                                        <th>Issue</th>
-                                        <th class="text-right">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($data as $index => $item)
-                                        <tr id="tr_{{ $item->id }}">
-                                            <td>{{ $item->id }}</td>
-                                            <td>{{ $item->category }}</td>
-                                            <td>{{ $item->function }}</td>
-                                            <td>{{ $item->issue }}</td>
-                                            <td class="text-right">
-                                                <a href="javascript: void(0)" class="badge badge-dark action-button"
-                                                    title="View"
-                                                    onclick="viewDeta1ls('{{ route('user.product.issue.show') }}', {{ $item->id }}, 'view')">View</a>
-
-                                                <a href="javascript: void(0)" class="badge badge-dark action-button"
-                                                    title="Edit"
-                                                    onclick="viewDeta1ls('{{ route('user.product.issue.show') }}', {{ $item->id }}, 'edit')">Edit</a>
-
-                                                <a href="javascript: void(0)" class="badge badge-dark action-button"
-                                                    title="Delete"
-                                                    onclick="confirm4lert('{{ route('user.product.issue.destroy') }}', {{ $item->id }}, 'delete')">Delete</a>
-                                            </td>
-                                        </tr>
-                                    @empty
+                            <form method="POST" action="{{route('user.product.issue.destroy.bulk')}}">
+                            @csrf
+                                <table class="table table-sm table-bordered table-hover" id="showProductIssueTable">
+                                    <thead>
                                         <tr>
-                                            <td class="text-center text-muted" colspan="100%"><em>No records found</em></td>
+                                            <th><input type="checkbox" id="checkbox-head" onclick="headerCheckFunc()"></th>
+                                            <th>#</th>
+                                            <th>Category</th>
+                                            <th>Function</th>
+                                            <th>Issue</th>
+                                            <th class="text-right">
+                                                Action
+                                                <div id="delete-box">
+                                                    <button type="submit" class="btn btn-sm btn-danger disabled">Remove</button>
+                                                </div>
+                                            </th>
                                         </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($data as $index => $item)
+                                            <tr id="tr_{{ $item->id }}">
+                                                <td>
+                                                    <input name="delete_check[]" class="tap-to-delete" type="checkbox" onclick="clickToRemove()" value="{{$item->id}}">
+                                                </td>
+                                                <td>{{ $item->id }}</td>
+                                                <td>{{ $item->category }}</td>
+                                                <td>{{ $item->function }}</td>
+                                                <td>{{ $item->issue }}</td>
+                                                <td class="text-right">
+                                                    <a href="javascript: void(0)" class="badge badge-dark action-button"
+                                                        title="View"
+                                                        onclick="viewDeta1ls('{{ route('user.product.issue.show') }}', {{ $item->id }}, 'view')">View</a>
+
+                                                    <a href="javascript: void(0)" class="badge badge-dark action-button"
+                                                        title="Edit"
+                                                        onclick="viewDeta1ls('{{ route('user.product.issue.show') }}', {{ $item->id }}, 'edit')">Edit</a>
+
+                                                    <a href="javascript: void(0)" class="badge badge-dark action-button"
+                                                        title="Delete"
+                                                        onclick="confirm4lert('{{ route('user.product.issue.destroy') }}', {{ $item->id }}, 'delete')">Delete</a>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td class="text-center text-muted" colspan="100%"><em>No records found</em></td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </form>
 
                             <div class="pagination-view">
                                 {{$data->links()}}
@@ -101,6 +123,26 @@
             </div>
         </div>
     </section>
+
+    <div class="modal fade" id="csvUploadModal" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Import CSV data
+                    <button class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{{route('user.product.issue.csv.store')}}" enctype="multipart/form-data" id="fileCsvUploadForm">
+                        @csrf
+                        <input type="file" name="file" class="form-control" accept=".csv">
+                        <br>
+                        <p class="small">Please select csv file</p>
+                        <button type="submit" class="btn btn-sm btn-primary" id="csvImportBtn">Import <i class="fas fa-upload"></i></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
@@ -143,6 +185,7 @@
                         // prepending new data
                         let viewVar = "'view'";
                         let newData = '';
+                        newData += '<td></td>';
                         newData += '<td>'+result.id+'</td>';
                         newData += '<td>' + $('#categoryCreate').val() + '</td>';
                         newData += '<td>' + $('#functionCreate').val() + '</td>';
@@ -150,7 +193,7 @@
 
                         newData += '<td class="text-right"><a href="javascript: void(0)" class="badge badge-dark action-button" title="View" onclick="viewDeta1ls('+result.viewRoute + ', ' + result.id + ', ' + viewVar + ')">View</a></td>';
 
-                        $('#showProductIssueTable').append('<tr>' + newData + '</tr>');
+                        $('#showProductIssueTable').prepend('<tr>' + newData + '</tr>');
                         $('#newDeptAlert').addClass('alert-success').html(result.message).show();
 
                         setTimeout(() => {

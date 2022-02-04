@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ProductIssue;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
 
 class ProductIssueController extends Controller
 {
@@ -20,7 +21,7 @@ class ProductIssueController extends Controller
                         ->get();
                 }
             }]
-        ])->paginate(50);
+        ])->latest('id')->paginate(50);
 
         return view('admin.product-issue.index', compact('data'));
     }
@@ -50,6 +51,78 @@ class ProductIssueController extends Controller
             return response()->json(['status' => 400, 'title' => 'failure', 'message' => $validator->errors()->first()]);
         }
     }
+
+    // csv upload
+    public function csvStore(Request $request)
+    {
+        if (!empty($request->file)) {
+            // if ($request->input('submit') != null ) {
+            $file = $request->file('file');
+            // File Details 
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension();
+            $tempPath = $file->getRealPath();
+            $fileSize = $file->getSize();
+            $mimeType = $file->getMimeType();
+
+            // Valid File Extensions
+            $valid_extension = array("csv");
+            // 50MB in Bytes
+            $maxFileSize = 50097152;
+            // Check file extension
+            if (in_array(strtolower($extension), $valid_extension)) {
+                // Check file size
+                if ($fileSize <= $maxFileSize) {
+                    // File upload location
+                    $location = 'admin/uploads/csv';
+                    // Upload file
+                    $file->move($location, $filename);
+                    // Import CSV to Database
+                    $filepath = public_path($location . "/" . $filename);
+                    // Reading file
+                    $file = fopen($filepath, "r");
+                    $importData_arr = array();
+                    $i = 0;
+                    while (($filedata = fgetcsv($file, 10000, ",")) !== FALSE) {
+                        $num = count($filedata);
+                        // Skip first row
+                        if ($i == 0) {
+                            $i++;
+                            continue;
+                        }
+                        for ($c = 0; $c < $num; $c++) {
+                            $importData_arr[$i][] = $filedata[$c];
+                        }
+                        $i++;
+                    }
+                    fclose($file);
+
+                    // echo '<pre>';print_r($importData_arr);exit();
+
+                    // Insert into database
+                    foreach ($importData_arr as $importData) {
+                        $insertData = array(
+                            "category" => isset($importData[0]) ? $importData[0] : null,
+                            "function" => isset($importData[1]) ? $importData[1] : null,
+                            "issue" => isset($importData[2]) ? $importData[2] : null,
+                        );
+                        // echo '<pre>';print_r($insertData);exit();
+                        ProductIssue::insertData($insertData);
+                    }
+                    Session::flash('message', 'Import Successful.');
+                } else {
+                    Session::flash('message', 'File too large. File must be less than 50MB.');
+                }
+            } else {
+                Session::flash('message', 'Invalid File Extension. supported extensions are ' . implode(', ', $valid_extension));
+            }
+        } else {
+            Session::flash('message', 'No file found.');
+        }
+
+        return redirect()->route('user.product.issue.list');
+    }
+    // csv upload
 
     public function show(Request $request)
     {
@@ -85,5 +158,14 @@ class ProductIssueController extends Controller
     {
         ProductIssue::where('id', $request->id)->delete();
         return response()->json(['error' => false, 'title' => 'Deleted', 'message' => 'Record deleted', 'type' => 'success']);
+    }
+
+    public function bulkDestroy(Request $request)
+    {
+        $delete_ids = $request->delete_check;
+        foreach ($delete_ids as $index => $delete_id) {
+            ProductIssue::where('id', $delete_id)->delete();
+        }
+        return redirect()->back()->with('success', 'Multiple Product issues deleted successfully');
     }
 }

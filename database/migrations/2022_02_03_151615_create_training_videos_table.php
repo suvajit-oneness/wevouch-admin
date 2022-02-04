@@ -20,8 +20,6 @@ class CreateTrainingVideosTable extends Migration
             $table->timestamp('created_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP'));
         });
-
-        DB::statement("INSERT INTO `training_videos` (`id`, `title`, `link`) VALUES (1, 'Node.js Tutorial for Beginners: Learn Node in 1 Hour', 'https://www.youtube.com/embed/TlB_eWDSMt4')");
     }
 
     /**

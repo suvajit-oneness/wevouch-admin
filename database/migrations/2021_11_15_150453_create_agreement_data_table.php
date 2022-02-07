@@ -17,7 +17,6 @@ class CreateAgreementDataTable extends Migration
         Schema::create('agreement_data', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('rfq_id');
-            // $table->bigInteger('borrower_id');
             // $table->bigInteger('agreement_id');
             $table->bigInteger('field_id');
             $table->text('field_name');

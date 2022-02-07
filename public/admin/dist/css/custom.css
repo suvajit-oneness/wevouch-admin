@@ -423,22 +423,11 @@ mark {
 }
 
 
-/* .borrower-address-holder {
-    height: 38px;
-    min-height: 38px;
-    overflow: hidden;
-} */
-
-
 /* datatable style */
 
 .dt-buttons,
 .dataTables_info {
     float: left;
-}
-
-.borrowers-table_filter {
-    float: right;
 }
 
 .dataTables_length {

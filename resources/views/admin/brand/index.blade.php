@@ -97,7 +97,7 @@
                             </form>
 
                             <div class="pagination-view">
-                                {{$data->links()}}
+                                {{$data->appends(request()->query())->links()}}
                             </div>
 
                         </div>

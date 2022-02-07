@@ -46,29 +46,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-group row">
-                                <div class="col-sm-6">
-                                    <label for="department" class="col-form-label">Department <span class="text-danger">*</span></label>
-                                    <select name="department" id="department" class="form-control @error('department') {{'is-invalid'}} @enderror">
-                                        <option value="" hidden selected>Select department</option>
-                                        @foreach ($data->departments as $item)
-                                            <option value="{{$item->id}}" {{($data->user->department_id == $item->id) ? 'selected' : ''}}>{{$item->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('department') <p class="small mb-0 text-danger">{{$message}}</p> @enderror
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <label for="designation" class="col-form-label">Designation <span class="text-danger">*</span></label>
-                                    <select name="designation" id="designation" class="form-control @error('designation') {{'is-invalid'}} @enderror">
-                                        <option value="" hidden selected>Select designation</option>
-                                        @foreach ($data->designations as $item)
-                                            <option value="{{$item->id}}" {{($data->user->designation_id == $item->id) ? 'selected' : ''}}>{{$item->name}}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('designation') <p class="small mb-0 text-danger">{{$message}}</p> @enderror
-                                </div>
-                            </div>
 
                             <div class="form-group row">
                                 <div class="col-sm-6">

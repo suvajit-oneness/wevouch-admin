@@ -23,7 +23,10 @@ class ProductDatasController extends Controller
                         ->get();
                 }
             }]
-        ])->latest('id')->paginate(50);
+        ])
+        ->latest('id')
+        ->paginate(50)
+        ->appends(request()->query());
 
         return view('admin.product-data.index', compact('data'));
     }
@@ -221,6 +224,7 @@ class ProductDatasController extends Controller
 
     public function bulkDestroy(Request $request)
     {
+        // dd($request->all());
         $delete_ids = $request->delete_check;
         foreach ($delete_ids as $index => $delete_id) {
             ProductDatas::where('id', $delete_id)->delete();

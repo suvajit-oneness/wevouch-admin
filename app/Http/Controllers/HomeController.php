@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Agreement;
-use App\Models\Borrower;
 use App\Models\User;
 use App\Models\MailLog;
 use App\Models\Notification;
@@ -32,12 +31,10 @@ class HomeController extends Controller
     public function index()
     {
         $data = (object)[];
-        $data->borrower = Borrower::count();
         // $data->agreement = Agreement::count();
         $data->employee = User::count();
         $data->office = Office::count();
 
-        $data->recentBorrowers = Borrower::latest()->limit(5)->get();
         return view('admin.dashboard', compact('data'));
         // return view('home');
     }

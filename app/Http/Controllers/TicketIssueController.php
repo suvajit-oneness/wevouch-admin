@@ -19,7 +19,10 @@ class TicketIssueController extends Controller
                         ->get();
                 }
             }]
-        ])->paginate(50);
+        ])
+        ->latest('id')
+        ->paginate(50)
+        ->appends(request()->query());
 
         return view('admin.ticket.index', compact('data'));
     }

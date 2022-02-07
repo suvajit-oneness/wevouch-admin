@@ -115,13 +115,6 @@
                                     <p>Dashboard</p>
                                 </a>
                             </li>
-                            {{-- <li class="nav-item">
-                                <a href="{{ route('user.borrower.list') }}"
-                                    class="nav-link {{ request()->is('user/borrower*') ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-users-cog"></i>
-                                    <p>Borrowers</p>
-                                </a>
-                            </li> --}}
                             <li class="nav-header">MANAGEMENT</li>
                             <li class="nav-item">
                                 <a href="{{ route('user.brand.list') }}"
@@ -180,13 +173,13 @@
                                     <p>Employee management</p>
                                 </a>
                             </li> --}}
-                            {{-- <li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('user.office.list') }}"
                                     class="nav-link {{ request()->is('user/office*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-building"></i>
                                     <p>Office management</p>
                                 </a>
-                            </li> --}}
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('user.profile') }}"
                                     class="nav-link {{ request()->is('user/profile*') ? 'active' : '' }}">
@@ -346,9 +339,6 @@
                                 if (sub == 'sub') {
                                     $('#tr_sub_' + id + '').remove();
                                 }
-                                if (sub == 'yajraDelete') {
-                                    $borrowersTable.ajax.reload();
-                                }
 
                                 Swal.fire(response.title, response.message, 'success')
                             } else if (type == 'block' || type == 'activate') {
@@ -471,26 +461,6 @@
         // pan card number
         $('#pan_card_number').on('keyup', function() {
             $(this).val($(this).val().toUpperCase());
-        });
-
-        // borrower agreement ifs code api 
-        $('.ifsCodeFetch').on('keyup', function() {
-            let ifsc = $(this).val();
-            if (ifsc.length == 11) {
-                $.ajax({
-                    url : "https://ifsc.razorpay.com/"+ifsc,
-                    method : "GET",
-                    success: function(result) {
-                        // console.log(result);
-                        // bank name
-                        $('input[name="field_name[banknameofborrower]"]').val(result.BANK);
-                        // branch
-                        $('input[name="field_name[branchnameofborrower]"]').val(result.BRANCH);
-                        // address
-                        $('input[name="field_name[bankaddressofborrower]"]').val(result.ADDRESS);
-                    }
-                });
-            }
         });
 
         // accept interger only and one decimal point

@@ -20,7 +20,10 @@ class BrandController extends Controller
                         ->get();
                 }
             }]
-        ])->latest('id')->paginate(50);
+        ])
+        ->latest('id')
+        ->paginate(50)
+        ->appends(request()->query());
 
         return view('admin.brand.index', compact('data'));
     }

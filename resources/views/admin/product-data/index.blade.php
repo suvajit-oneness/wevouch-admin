@@ -110,7 +110,7 @@
                             </form>
 
                             <div class="pagination-view">
-                                {{$data->links()}}
+                                {{$data->appends(request()->query())->onEachSide(1)->links()}}
                             </div>
 
                         </div>

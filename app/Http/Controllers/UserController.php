@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Designation;
-use App\Models\Department;
 use App\Models\Office;
 use App\Models\User;
 use App\Models\UserType;
@@ -35,8 +33,6 @@ class UserController extends Controller
     {
         $data = (object)[];
         $data->users = User::select('id', 'name', 'user_type')->orderBy('name')->get();
-        $data->departments = Department::select('id', 'name')->orderBy('name')->get();
-        $data->designations = Designation::select('id', 'name')->orderBy('name')->get();
         $data->offices = Office::select('id', 'name')->orderBy('name')->get();
         $data->user_type = UserType::all();
         return view('admin.employee.create', compact('data'));
@@ -56,8 +52,6 @@ class UserController extends Controller
             'employee_id' => 'required|string|min:1|max:255',
             'email' => 'required|string|email|unique:users',
             'phone_number' => 'nullable|integer|digits:10',
-            'department' => 'required|integer|min:1',
-            'designation' => 'required|integer|min:1',
             'parent_id' => 'nullable|numeric|min:1',
             'user_type' => 'required|numeric|min:1',
             'office' => 'required|numeric|min:1',
@@ -85,8 +79,6 @@ class UserController extends Controller
                 $user->emp_id = $request->employee_id;
                 $user->email = $request->email;
                 $user->mobile = $request->phone_number;
-                $user->department_id = $request->department;
-                $user->designation_id = $request->designation;
                 $user->parent_id = $request->parent_id ? $request->parent_id : 0;
                 $user->user_type = $request->user_type;
                 $user->office_id = $request->office;
@@ -134,15 +126,13 @@ class UserController extends Controller
      */
     public function show(Request $request)
     {
-        $data = User::with(['type', 'department', 'designation'])->where('id', $request->id)->first();
+        $data = User::with(['type', 'designation'])->where('id', $request->id)->first();
 
         // dd($data);
         $user_parent = $data->parent_id ? $data->parent->name : null;
-        $user_department = $data->department_id != 0 ? $data->department->name : null;
-        $user_designation = $data->designation_id != 0 ? $data->designation->name : null;
         $user_office = $data->office_id ? $data->office->name : null;
 
-        return response()->json(['error' => false, 'data' => ['name' => $data->name, 'email' => $data->email, 'mobile' => $data->mobile, 'image_path' => asset($data->image_path), 'user_type' => $data->type->name, 'user_type_color' => $data->type->color, 'user_parent' => $user_parent, 'emp_id' => $data->emp_id, 'department' => $user_department, 'designation' => $user_designation, 'office' => $user_office]]);
+        return response()->json(['error' => false, 'data' => ['name' => $data->name, 'email' => $data->email, 'mobile' => $data->mobile, 'image_path' => asset($data->image_path), 'user_type' => $data->type->name, 'user_type_color' => $data->type->color, 'user_parent' => $user_parent, 'emp_id' => $data->emp_id, 'office' => $user_office]]);
     }
 
     /**
@@ -156,8 +146,6 @@ class UserController extends Controller
         $data = (object)[];
         $data->user = User::findOrFail($id);
         $data->users = User::select('id', 'name', 'user_type')->where('id', '!=', $id)->orderBy('name')->get();
-        $data->departments = Department::select('id', 'name')->orderBy('name')->get();
-        $data->designations = Designation::select('id', 'name')->orderBy('name')->get();
         $data->offices = Office::select('id', 'name')->orderBy('name')->get();
         $data->user_type = UserType::all();
         return view('admin.employee.edit', compact('data'));
@@ -176,8 +164,6 @@ class UserController extends Controller
             'name' => 'required|string|min:1|max:255',
             'employee_id' => 'required|string|min:1|max:255',
             'phone_number' => 'nullable|integer|digits:10',
-            'department' => 'required|integer|min:1',
-            'designation' => 'required|integer|min:1',
             'parent_id' => 'nullable|numeric|min:1',
             'user_type' => 'required|numeric|min:1',
             'office' => 'required|numeric|min:1',
@@ -189,8 +175,6 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->emp_id = $request->employee_id;
         $user->mobile = $request->phone_number;
-        $user->department_id = $request->department;
-        $user->designation_id = $request->designation;
         $user->parent_id = $request->parent_id ? $request->parent_id : 0;
         $user->user_type = $request->user_type;
         $user->office_id = $request->office;

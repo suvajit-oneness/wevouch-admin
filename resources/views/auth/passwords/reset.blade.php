@@ -13,7 +13,7 @@
 <body class="hold-transition login-page">
     <div class="login-box">
         <div class="login-logo">
-            <b>Hundee</b> Admin
+            <b>{{env('APP_NAME')}}</b> Admin
         </div>
         <div class="card">
             <div class="card-body login-card-body">
